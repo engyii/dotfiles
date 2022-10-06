@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  huginn:
+    container_name: huginn
+    ports:
+      - 3030:3000
+    volumes:
+      - huginn-db:/var/lib/mysql
+    image: huginn/huginn
+    restart: unless-stopped
