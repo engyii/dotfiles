@@ -1,0 +1,17 @@
+# ~/.chezmoi.toml.tmpl
+# Chezmoi configuration file
+
+{{- $hostname := .chezmoi.hostname }}
+{{- $isWSL := false }}
+{{- if (index .chezmoi.kernel "osrelease") | lower | contains "microsoft" }}
+{{-   $isWSL = true }}
+{{- end -}}
+
+[data]
+    name = "{{ .chezmoi.username }}"
+    email = ""
+    # Set to true if this is a work machine
+    isWork = false
+    # Automatically detected
+    isWSL = {{ $isWSL }}
+    hostname = "{{ $hostname }}"

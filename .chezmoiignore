@@ -1,0 +1,32 @@
+# Ignore patterns for chezmoi
+
+# Documentation and meta files
+README.md
+LICENSE
+*.md
+
+# Directories with Docker configs etc
+docker/
+
+# Don't sync work-specific configs on personal machines
+{{ if not .isWork }}
+private_dot_ssh/work_*
+{{ end }}
+
+# Don't sync personal configs on work machines
+{{ if .isWork }}
+private_dot_ssh/personal_*
+{{ end }}
+
+# OS-specific ignores
+{{ if ne .chezmoi.os "darwin" }}
+# macOS-specific files
+Library/
+.macos
+{{ end }}
+
+{{ if ne .chezmoi.os "linux" }}
+# Linux-specific files
+.Xresources
+.xinitrc
+{{ end }}

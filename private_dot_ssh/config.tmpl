@@ -1,0 +1,37 @@
+# SSH Config
+
+Host *
+    ServerAliveInterval 60
+    ServerAliveCountMax 30
+    AddKeysToAgent yes
+    IdentitiesOnly yes
+    HashKnownHosts yes
+    Compression yes
+
+# GitHub
+Host github.com
+    User git
+    IdentityFile ~/.ssh/id_github
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%r@%h:%p
+    ControlPersist 600
+
+# Personal servers
+{{ if not .isWork -}}
+# Add your personal servers here
+# Host personal-server
+#     HostName example.com
+#     User username
+#     Port 22
+#     IdentityFile ~/.ssh/id_personal
+{{ end -}}
+
+# Work servers
+{{ if .isWork -}}
+# Add your work servers here
+# Host work-server
+#     HostName work-example.com
+#     User work-username
+#     Port 22
+#     IdentityFile ~/.ssh/id_work
+{{ end -}}

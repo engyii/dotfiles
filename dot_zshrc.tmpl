@@ -1,0 +1,137 @@
+# ~/.zshrc
+# zsh configuration file
+
+# =============================================================================
+#                                   Variables
+# =============================================================================
+export EDITOR="vim"
+export VISUAL="vim"
+export TERM="xterm-256color"
+export HISTFILE="$HOME/.zsh_history"
+export HISTSIZE=10000
+export SAVEHIST=10000
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+# Path additions
+export PATH="$HOME/.local/bin:$PATH"
+{{ if eq .chezmoi.os "linux" -}}
+export PATH="$HOME/.local/bin:$PATH"
+{{ else if eq .chezmoi.os "darwin" -}}
+export PATH="/opt/homebrew/bin:$PATH"
+{{ end -}}
+
+# Node.js version manager (nvm)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# =============================================================================
+#                                   Options
+# =============================================================================
+# History
+setopt HIST_IGNORE_ALL_DUPS     # Don't record dupes in history
+setopt HIST_SAVE_NO_DUPS        # Don't save duplicate entries
+setopt HIST_REDUCE_BLANKS       # Remove superfluous blanks
+setopt INC_APPEND_HISTORY       # Add commands as they are typed
+setopt EXTENDED_HISTORY         # Record timestamp of command
+
+# General
+setopt AUTO_CD                  # Go to folder path without using cd
+setopt AUTO_PUSHD               # Push the current directory visited on the stack
+setopt PUSHD_IGNORE_DUPS        # Do not store duplicates in the stack
+setopt PUSHD_SILENT             # Do not print the directory stack after pushd or popd
+setopt CORRECT                  # Spelling correction
+setopt CDABLE_VARS              # Change directory to a path stored in a variable
+setopt EXTENDED_GLOB            # Use extended globbing syntax
+
+# =============================================================================
+#                                   Plugins
+# =============================================================================
+# Bootstrap Zap plugin manager
+[ -f "$HOME/.local/share/zap/zap.zsh" ] || zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
+
+# Source zap
+[ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh"
+
+# Plugins
+plug "zap-zsh/supercharge"
+plug "zap-zsh/exa"
+plug "zap-zsh/fzf"
+plug "zsh-users/zsh-autosuggestions"
+plug "zsh-users/zsh-syntax-highlighting"
+plug "zsh-users/zsh-completions"
+plug "agkozak/zsh-z"
+
+# =============================================================================
+#                                   Aliases
+# =============================================================================
+# General
+alias reload="source ~/.zshrc"
+alias path='echo $PATH | tr -s ":" "\n"'
+alias dots='chezmoi'
+
+# Navigation
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+
+# Utilities
+alias c="clear"
+alias mkdir="mkdir -p"
+alias ls="exa --group-directories-first"
+alias ll="exa -l --icons --group-directories-first"
+alias la="exa -la --icons --group-directories-first"
+alias lt="exa -T --icons --group-directories-first"
+alias cat="bat --paging=never"
+alias grep="rg"
+alias find="fd"
+
+# Git aliases
+alias g="git"
+alias gs="git status"
+alias ga="git add"
+alias gc="git commit"
+alias gcm="git commit -m"
+alias gco="git checkout"
+alias gp="git push"
+alias gl="git pull"
+alias gd="git diff"
+alias gb="git branch"
+alias gt="git log --graph --oneline --all"
+
+# Node.js / npm / yarn
+alias ni="npm install"
+alias nr="npm run"
+alias nrb="npm run build"
+alias nrs="npm run start"
+alias nrd="npm run dev"
+alias nrt="npm run test"
+alias yi="yarn install"
+alias ys="yarn start"
+alias yd="yarn dev"
+alias yt="yarn test"
+
+{{ if .isWSL -}}
+# WSL-specific aliases
+alias open="explorer.exe"
+{{ end -}}
+
+# =============================================================================
+#                                  Functions
+# =============================================================================
+# Create a new directory and enter it
+mkcd() {
+  mkdir -p "$@" && cd "$_"
+}
+
+# Initialize Starship prompt
+eval "$(starship init zsh)"
+
+# Apply terminal color scheme (if not already configured at terminal level)
+if [[ -f ~/.config/catppuccin.sh ]]; then
+  source ~/.config/catppuccin.sh
+fi
+
+# Load local configurations (if any)
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
