@@ -7,11 +7,33 @@
 {{-   $isWSL = true }}
 {{- end -}}
 
+{{- $name := "" }}
+{{- $email := "" }}
+{{- $isWork := false }}
+
+{{- if hasKey . "name" }}
+{{-   $name = .name }}
+{{- else }}
+{{-   $name = promptString "Your full name for Git" -}}
+{{- end }}
+
+{{- if hasKey . "email" }}
+{{-   $email = .email }}
+{{- else }}
+{{-   $email = promptString "Your email address for Git" -}}
+{{- end }}
+
+{{- if hasKey . "isWork" }}
+{{-   $isWork = .isWork }}
+{{- else }}
+{{-   $isWork = promptBool "Is this a work machine" -}}
+{{- end }}
+
 [data]
-    name = "{{ .chezmoi.username }}"
-    email = ""
+    name = "{{ $name }}"
+    email = "{{ $email }}"
     # Set to true if this is a work machine
-    isWork = false
+    isWork = {{ $isWork }}
     # Automatically detected
     isWSL = {{ $isWSL }}
     hostname = "{{ $hostname }}"

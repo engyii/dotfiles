@@ -112,10 +112,12 @@ alias ys="yarn start"
 alias yd="yarn dev"
 alias yt="yarn test"
 
-{{ if .isWSL -}}
+{{- if hasKey . "isWSL" }}
+{{- if .isWSL }}
 # WSL-specific aliases
 alias open="explorer.exe"
-{{ end -}}
+{{- end }}
+{{- end }}
 
 # =============================================================================
 #                                  Functions

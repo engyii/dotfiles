@@ -1,0 +1,21 @@
+# ~/.chezmoi.yaml.tmpl
+# Chezmoi configuration file (YAML version)
+
+{{- $hostname := .chezmoi.hostname }}
+{{- $isWSL := false }}
+{{- if (index .chezmoi.kernel "osrelease") | lower | contains "microsoft" }}
+{{-   $isWSL = true }}
+{{- end -}}
+
+{{- $name := promptStringOnce . "name" "Your full name for Git" -}}
+{{- $email := promptStringOnce . "email" "Your email address for Git" -}}
+{{- $isWork := promptBoolOnce . "isWork" "Is this a work machine" -}}
+
+data:
+  name: {{ $name | quote }}
+  email: {{ $email | quote }}
+  # Set to true if this is a work machine
+  isWork: {{ $isWork }}
+  # Automatically detected
+  isWSL: {{ $isWSL }}
+  hostname: {{ $hostname | quote }}

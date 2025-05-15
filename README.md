@@ -25,7 +25,6 @@ Cross-platform dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 
 ## Installation
 
-### Quick Install
-
+### One-Line Bootstrap (Recommended)
 ```bash
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply engyii
+sh -c "$(curl -fsLS https://raw.githubusercontent.com/engyii/dotfiles/main/bootstrap.sh)"

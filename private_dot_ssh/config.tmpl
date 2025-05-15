@@ -17,21 +17,25 @@ Host github.com
     ControlPersist 600
 
 # Personal servers
-{{ if not .isWork -}}
+{{- if hasKey . "isWork" }}
+{{- if not .isWork }}
 # Add your personal servers here
 # Host personal-server
 #     HostName example.com
 #     User username
 #     Port 22
 #     IdentityFile ~/.ssh/id_personal
-{{ end -}}
+{{- end }}
+{{- end }}
 
 # Work servers
-{{ if .isWork -}}
+{{- if hasKey . "isWork" }}
+{{- if .isWork }}
 # Add your work servers here
 # Host work-server
 #     HostName work-example.com
 #     User work-username
 #     Port 22
 #     IdentityFile ~/.ssh/id_work
-{{ end -}}
+{{- end }}
+{{- end }}
