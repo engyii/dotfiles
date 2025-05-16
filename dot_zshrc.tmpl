@@ -33,6 +33,12 @@ plug "zsh-users/zsh-syntax-highlighting"
 plug "zap-zsh/supercharge"
 plug "zap-zsh/zap-prompt"
 plug "zap-zsh/fzf"
+# Try to use zap-zsh/eza if available, otherwise use zap-zsh/exa
+if command -v eza &> /dev/null; then
+    plug "zap-zsh/eza"
+elif command -v exa &> /dev/null; then
+    plug "zap-zsh/exa"
+fi
 plug "agkozak/zsh-z"
 
 # Container detection
@@ -51,7 +57,6 @@ alias open="xdg-open"
 # WSL specific configurations
 alias open="explorer.exe"
 {{ end -}}
-
 # General aliases
 # Use exa or ls depending on what's available
 if command -v eza &> /dev/null; then
