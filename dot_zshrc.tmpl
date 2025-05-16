@@ -21,21 +21,6 @@ setopt INC_APPEND_HISTORY
 export EDITOR="nvim"
 export VISUAL="nvim"
 
-# Load autoload functions
-autoload -Uz compinit colors
-colors
-compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
-
-# Basic zsh settings
-zstyle ':completion:*' menu select
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
-setopt AUTO_CD
-setopt EXTENDED_GLOB
-setopt PROMPT_SUBST
-setopt AUTO_PUSHD
-setopt PUSHD_IGNORE_DUPS
-setopt PUSHD_SILENT
-
 # Initialize zap plugin manager
 [ -f "$HOME/.local/share/zap/zap.zsh" ] || zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
 
@@ -46,11 +31,17 @@ setopt PUSHD_SILENT
 plug "zsh-users/zsh-autosuggestions"
 plug "zsh-users/zsh-syntax-highlighting"
 plug "zap-zsh/supercharge"
-# Removing zap-prompt to avoid vcs_info issues
-# plug "zap-zsh/zap-prompt"
+plug "zap-zsh/zap-prompt"
 plug "zap-zsh/fzf"
-plug "zap-zsh/exa"
 plug "agkozak/zsh-z"
+
+# Container detection
+if [ -f "/.dockerenv" ] || grep -q docker /proc/1/cgroup 2>/dev/null; then
+    export RUNNING_IN_CONTAINER=true
+  echo "🐳 Running in container environment"
+else
+    export RUNNING_IN_CONTAINER=false
+fi
 
 # OS-specific configurations
 {{ if eq .osid "linux" -}}
@@ -62,14 +53,29 @@ alias open="explorer.exe"
 {{ end -}}
 
 # General aliases
-alias ls="exa --icons --group-directories-first"
-alias ll="exa -la --icons --group-directories-first"
-alias lt="exa -T --icons --group-directories-first"
-alias grep="rg"
-alias cat="bat"
-alias vim="nvim"
-alias vi="nvim"
-alias cd="z"
+# Use exa or ls depending on what's available
+if command -v eza &> /dev/null; then
+    alias ls="eza --icons --group-directories-first"
+    alias ll="eza -la --icons --group-directories-first"
+    alias lt="eza -T --icons --group-directories-first"
+elif command -v exa &> /dev/null; then
+    alias ls="exa --icons --group-directories-first"
+    alias ll="exa -la --icons --group-directories-first"
+    alias lt="exa -T --icons --group-directories-first"
+else
+    alias ls="ls --color=auto"
+    alias ll="ls -la --color=auto"
+fi
+
+# More aliases for modern CLI tools with fallbacks
+command -v rg &> /dev/null && alias grep="rg" || alias grep="grep --color=auto"
+command -v bat &> /dev/null && alias cat="bat" || true
+command -v nvim &> /dev/null && alias vim="nvim" && alias vi="nvim" || true
+
+# Z plugin to replace cd when available
+if command -v z &> /dev/null; then
+    alias cd="z"
+fi
 
 # Git aliases
 alias gs="git status"
@@ -98,21 +104,15 @@ fi
 # FZF configuration
 if command -v fzf &> /dev/null; then
   # Set fd as the default source for fzf
-  export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-  export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+  if command -v fd &> /dev/null; then
+    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+  fi
 
   # Use catppuccin theme for fzf
   export FZF_DEFAULT_OPTS=" \
   --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
   --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
   --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
-fi
-
-# Make sure the directory for the zcompdump file exists
-mkdir -p "$XDG_CACHE_HOME/zsh"
-
-# Check if we are in a dev container
-if [ -f /var/run/.containerenv ] || [ -f /.dockerenv ] || [ -n "$CODESPACES" ]; then
-  echo "🐳 Running in container environment"
 fi
