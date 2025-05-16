@@ -94,6 +94,7 @@ install_debian() {
     fc-cache -fv
     rm Hack.zip
   fi
+
     {{- if .features.terminal_utils }}
   # Install exa (if not available, try eza as its successor)
   if ! command -v exa >/dev/null 2>&1 && ! command -v eza >/dev/null 2>&1; then
@@ -175,6 +176,86 @@ install_arch() {
     neovim
 }
 
+install_alpine() {
+  log "Installing Alpine Linux packages"
+
+  # Update package lists
+  apk update
+
+  # Install base packages
+  apk add \
+    zsh \
+    git \
+    curl \
+    unzip \
+    fontconfig \
+    {{- if .features.terminal_utils }}
+    ripgrep \
+    fd \
+    fzf \
+{{- end }}
+    {{- if .features.tmux }}
+    tmux \
+{{- end }}
+    {{- if .features.node }}
+    nodejs \
+    npm \
+    {{- end }}
+    neovim
+
+  # Install starship
+  if ! command -v starship >/dev/null 2>&1; then
+    log "Installing Starship"
+    curl -sS https://starship.rs/install.sh | sh -s -- -y
+fi
+
+  # Install Nerd Font if we're not in a container (not needed for terminal use)
+  if [ ! -f /.dockerenv ] && [ ! -f /run/.containerenv ]; then
+    if [ ! -f ~/.local/share/fonts/Hack\ Regular\ Nerd\ Font\ Complete.ttf ]; then
+      log "Installing Hack Nerd Font"
+      mkdir -p ~/.local/share/fonts
+      cd /tmp
+      curl -fLO https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Hack.zip
+      unzip -o Hack.zip -d ~/.local/share/fonts
+      fc-cache -fv
+      rm Hack.zip
+    fi
+  else
+    log "Running in container environment - skipping font installation"
+  fi
+
+  {{- if .features.terminal_utils }}
+  # Install exa/eza
+  if ! command -v exa >/dev/null 2>&1 && ! command -v eza >/dev/null 2>&1; then
+    apk add eza || {
+      if command -v cargo >/dev/null 2>&1; then
+        cargo install eza
+      else
+        apk add rust cargo
+        cargo install eza
+      fi
+    }
+  fi
+
+  # Install bat
+  if ! command -v bat >/dev/null 2>&1; then
+    apk add bat
+  fi
+
+  # Install delta
+  if ! command -v delta >/dev/null 2>&1; then
+    apk add git-delta || {
+      if command -v cargo >/dev/null 2>&1; then
+        cargo install git-delta
+      else
+        apk add rust cargo
+        cargo install git-delta
+      fi
+    }
+  fi
+  {{- end }}
+}
+
 # Install Oh My Tmux
 install_ohmytmux() {
   if [ ! -d ~/.tmux ]; then
@@ -211,8 +292,18 @@ install_zap() {
   fi
 }
 
+# Detect if we're running in a container
+is_container() {
+  [ -f /.dockerenv ] || [ -f /run/.containerenv ]
+}
+
 # Main installation logic
 log "Starting package installation"
+
+# Check if we're in a container
+if is_container; then
+  log "Running in container environment"
+fi
 
 case "$OS" in
   Darwin)
@@ -223,8 +314,29 @@ case "$OS" in
       install_debian
     elif [ -f /etc/arch-release ]; then
       install_arch
+    elif [ -f /etc/alpine-release ]; then
+      install_alpine
     else
-      error "Unsupported Linux distribution"
+      # Try to detect the OS using /etc/os-release
+      if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        case "$ID" in
+          alpine)
+            install_alpine
+            ;;
+          debian|ubuntu|mint)
+            install_debian
+            ;;
+          arch|manjaro|endeavouros)
+            install_arch
+            ;;
+          *)
+            error "Unsupported Linux distribution: $ID"
+            ;;
+        esac
+      else
+        error "Unsupported Linux distribution - no detection method available"
+      fi
     fi
     ;;
   *)
@@ -243,8 +355,8 @@ install_nvm
 # Install zap plugin manager
 install_zap
 
-# Set zsh as default shell if it's not already
-if [ "$SHELL" != "$(which zsh)" ]; then
+# Set zsh as default shell if it's not already and we're not in a container
+if [ "$SHELL" != "$(which zsh)" ] && ! is_container; then
   log "Setting zsh as default shell"
   chsh -s "$(which zsh)" || true
 fi
