@@ -6,7 +6,7 @@
 	editor = {{ if hasKey . "editor" }}{{ .editor }}{{ else }}vi{{ end }}
 	excludesfile = ~/.gitignore
 	autocrlf = input
-{{- if eq .termutils true }}
+{{- if (.termutils) }}
 	pager = {{ if lookPath "delta" }}delta{{ else }}less{{ end }}
 {{- end }}
 
