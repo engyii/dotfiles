@@ -39,7 +39,7 @@ install_packages() {
   fi
 
   echo -e "${YELLOW}Using package manager: ${pkg_manager}${NC}"
-  
+
   # Install packages
   for pkg in "${packages[@]}"; do
     echo -e "${BLUE}Installing ${pkg}...${NC}"
@@ -49,7 +49,7 @@ install_packages() {
 
 # Install essential packages
 echo -e "${BLUE}Installing essential packages...${NC}"
-essential_packages=("zsh" "git" "curl" "wget" "neovim" "ripgrep" "fd-find" "fzf" "tmux")
+essential_packages=("zsh" "git" "curl" "wget" "neovim" "ripgrep" "fd-find" "fzf" "tmux" "zsh-vcs")
 install_packages "${essential_packages[@]}"
 
 # Install modern CLI tools
@@ -82,16 +82,6 @@ if [[ "$SHELL" != *"zsh"* ]]; then
   echo -e "${BLUE}Setting zsh as default shell...${NC}"
   which zsh | sudo tee -a /etc/shells
   chsh -s "$(which zsh)"
-fi
-
-# Create SSH keys if they don't exist
-if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
-  echo -e "${BLUE}Creating SSH keys...${NC}"
-  ssh-keygen -t ed25519 -C "{{ .email }}" -f "$HOME/.ssh/id_ed25519" -N ""
-  eval "$(ssh-agent -s)"
-  ssh-add "$HOME/.ssh/id_ed25519"
-  echo -e "${YELLOW}SSH key generated. Don't forget to add it to your GitHub account:${NC}"
-  cat "$HOME/.ssh/id_ed25519.pub"
 fi
 
 {{ if eq .osid "wsl" -}}

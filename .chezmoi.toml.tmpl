@@ -1,5 +1,5 @@
 [data]
-    name = "{{ .chezmoi.username }}"
+    name = "{{ promptString "name" }}"
     email = "{{ promptString "email" }}"
     # Detect OS for conditional configurations
     {{- $osid := .chezmoi.os }}

@@ -21,6 +21,21 @@ setopt INC_APPEND_HISTORY
 export EDITOR="nvim"
 export VISUAL="nvim"
 
+# Load autoload functions
+autoload -Uz compinit colors
+colors
+compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
+
+# Basic zsh settings
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+setopt AUTO_CD
+setopt EXTENDED_GLOB
+setopt PROMPT_SUBST
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_SILENT
+
 # Initialize zap plugin manager
 [ -f "$HOME/.local/share/zap/zap.zsh" ] || zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
 
@@ -31,7 +46,8 @@ export VISUAL="nvim"
 plug "zsh-users/zsh-autosuggestions"
 plug "zsh-users/zsh-syntax-highlighting"
 plug "zap-zsh/supercharge"
-plug "zap-zsh/zap-prompt"
+# Removing zap-prompt to avoid vcs_info issues
+# plug "zap-zsh/zap-prompt"
 plug "zap-zsh/fzf"
 plug "zap-zsh/exa"
 plug "agkozak/zsh-z"
@@ -85,10 +101,18 @@ if command -v fzf &> /dev/null; then
   export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
-  
+
   # Use catppuccin theme for fzf
   export FZF_DEFAULT_OPTS=" \
   --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
   --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
   --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
+fi
+
+# Make sure the directory for the zcompdump file exists
+mkdir -p "$XDG_CACHE_HOME/zsh"
+
+# Check if we are in a dev container
+if [ -f /var/run/.containerenv ] || [ -f /.dockerenv ] || [ -n "$CODESPACES" ]; then
+  echo "🐳 Running in container environment"
 fi
