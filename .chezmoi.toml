@@ -3,7 +3,6 @@
     email = {{ prompt "Your email" "john.doe@example.com" }}
     # You can customize these based on your preferences
     editor = "vi"  # Default editor, change to vim, nvim, etc. as needed
-
     git = true
     node = true
     ssh = true
