@@ -189,6 +189,7 @@ install_alpine() {
     curl \
     unzip \
     fontconfig \
+    zsh-vcs \
     {{- if .features.terminal_utils }}
     ripgrep \
     fd \
@@ -288,7 +289,12 @@ install_tpm() {
 install_zap() {
   if [ ! -f ~/.local/share/zap/zap.zsh ]; then
     log "Installing zap"
-    zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
+    # Create directory first to ensure it exists
+    mkdir -p ~/.local/share/zap
+    # Use curl to fetch zap directly instead of running the installer script
+    # This is more reliable in minimal environments like Alpine
+    curl -sL -o ~/.local/share/zap/zap.zsh https://raw.githubusercontent.com/zap-zsh/zap/master/zap.zsh
+    chmod +x ~/.local/share/zap/zap.zsh
   fi
 }
 

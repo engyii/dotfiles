@@ -2,8 +2,10 @@
     name = {{ prompt "Your name" "John Doe" }}
     email = {{ prompt "Your email" "john.doe@example.com" }}
     # You can customize these based on your preferences
-    editor = "nvim"
+    editor = "vi"  # Default editor, change to vim, nvim, etc. as needed
     # Theme configuration
+    theme = "catppuccin-mocha" # Options: catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
+
 [data.features]
     git = true
     node = true
