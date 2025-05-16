@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# Colors for output
+GREEN="\033[0;32m"
+BLUE="\033[0;34m"
+RED="\033[0;31m"
+YELLOW="\033[0;33m"
+NC="\033[0m" # No Color
+
+echo -e "${BLUE}Setting up development environment...${NC}"
+
+# Function to check if command exists
+command_exists() {
+  command -v "$1" &> /dev/null
+}
+
+# Function to install packages based on package manager
+install_packages() {
+  local packages=("$@")
+  local pkg_manager=""
+  local install_cmd=""
+
+  # Detect package manager
+  if command_exists apt; then
+    pkg_manager="apt"
+    install_cmd="sudo apt update && sudo apt install -y"
+  elif command_exists dnf; then
+    pkg_manager="dnf"
+    install_cmd="sudo dnf install -y"
+  elif command_exists pacman; then
+    pkg_manager="pacman"
+    install_cmd="sudo pacman -Syu --noconfirm"
+  elif command_exists brew; then
+    pkg_manager="brew"
+    install_cmd="brew install"
+  else
+    echo -e "${RED}No supported package manager found.${NC}"
+    return 1
+  fi
+
+  echo -e "${YELLOW}Using package manager: ${pkg_manager}${NC}"
+  
+  # Install packages
+  for pkg in "${packages[@]}"; do
+    echo -e "${BLUE}Installing ${pkg}...${NC}"
+    $install_cmd $pkg
+  done
+}
+
+# Install essential packages
+echo -e "${BLUE}Installing essential packages...${NC}"
+essential_packages=("zsh" "git" "curl" "wget" "neovim" "ripgrep" "fd-find" "fzf" "tmux")
+install_packages "${essential_packages[@]}"
+
+# Install modern CLI tools
+echo -e "${BLUE}Installing modern CLI tools...${NC}"
+modern_tools=("exa" "bat" "delta" "jq")
+install_packages "${modern_tools[@]}"
+
+# Install Node.js if not installed
+if ! command_exists node; then
+  echo -e "${BLUE}Installing Node.js...${NC}"
+  curl -fsSL https://fnm.vercel.app/install | bash
+  source ~/.bashrc  # Source to use fnm immediately
+  fnm install --lts
+fi
+
+# Install Starship if not installed
+if ! command_exists starship; then
+  echo -e "${BLUE}Installing Starship...${NC}"
+  curl -sS https://starship.rs/install.sh | sh -s -- -y
+fi
+
+# Install Zap if not installed
+if [ ! -d "$HOME/.local/share/zap" ]; then
+  echo -e "${BLUE}Installing Zap plugin manager...${NC}"
+  zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
+fi
+
+# Set zsh as default shell if it's not already
+if [[ "$SHELL" != *"zsh"* ]]; then
+  echo -e "${BLUE}Setting zsh as default shell...${NC}"
+  which zsh | sudo tee -a /etc/shells
+  chsh -s "$(which zsh)"
+fi
+
+# Create SSH keys if they don't exist
+if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
+  echo -e "${BLUE}Creating SSH keys...${NC}"
+  ssh-keygen -t ed25519 -C "{{ .email }}" -f "$HOME/.ssh/id_ed25519" -N ""
+  eval "$(ssh-agent -s)"
+  ssh-add "$HOME/.ssh/id_ed25519"
+  echo -e "${YELLOW}SSH key generated. Don't forget to add it to your GitHub account:${NC}"
+  cat "$HOME/.ssh/id_ed25519.pub"
+fi
+
+{{ if eq .osid "wsl" -}}
+# WSL-specific setup
+echo -e "${BLUE}Setting up WSL-specific configurations...${NC}"
+# Enable systemd
+if ! grep -q "systemd=true" /etc/wsl.conf 2>/dev/null; then
+  echo -e "${YELLOW}Enabling systemd for WSL...${NC}"
+  echo -e "[boot]\nsystemd=true" | sudo tee -a /etc/wsl.conf
+fi
+{{ end -}}
+
+echo -e "${GREEN}Setup complete! Please restart your shell to apply all changes.${NC}"
+echo -e "${YELLOW}You may need to logout and log back in for zsh to be your default shell.${NC}"

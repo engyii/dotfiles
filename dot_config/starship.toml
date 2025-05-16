@@ -1,0 +1,89 @@
+# Catppuccin Mocha Theme for Starship
+
+# General settings
+add_newline = true
+command_timeout = 1000
+format = """
+[](#3b4261)\
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$nodejs\
+$rust\
+$golang\
+$php\
+$python\
+$docker_context\
+$cmd_duration\
+$line_break\
+$character
+"""
+
+# Module configurations
+[character]
+success_symbol = "[󰊠 ](#a6e3a1)"
+error_symbol = "[󰊠 ](#f38ba8)"
+vimcmd_symbol = "[󰊠 ](#f9e2af)"
+vimcmd_replace_one_symbol = "[󰊠 ](#fab387)"
+vimcmd_replace_symbol = "[󰊠 ](#fab387)"
+vimcmd_visual_symbol = "[󰊠 ](#89b4fa)"
+
+[directory]
+format = "[ ](#89b4fa)[$path](#cdd6f4) "
+truncation_length = 4
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[$symbol$branch]($style) "
+symbol = " "
+style = "fg:#f9e2af"
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "fg:#fab387"
+
+[nodejs]
+format = "[$symbol($version )]($style)"
+symbol = " "
+style = "fg:#a6e3a1"
+
+[rust]
+format = "[$symbol($version )]($style)"
+symbol = " "
+style = "fg:#f38ba8"
+
+[golang]
+format = "[$symbol($version )]($style)"
+symbol = " "
+style = "fg:#89b4fa"
+
+[php]
+format = "[$symbol($version )]($style)"
+symbol = " "
+style = "fg:#cba6f7"
+
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+symbol = " "
+style = "fg:#f9e2af"
+
+[docker_context]
+format = "[$symbol$context]($style) "
+symbol = " "
+style = "fg:#89b4fa"
+
+[cmd_duration]
+format = "[$duration]($style) "
+style = "fg:#f38ba8"
+
+[hostname]
+ssh_only = true
+format = "[@$hostname]($style) "
+style = "fg:#f9e2af"
+
+[username]
+show_always = false
+format = "[$user]($style)"
+style_user = "fg:#89b4fa"

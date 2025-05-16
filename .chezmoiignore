@@ -1,36 +1,9 @@
-# Ignore patterns for chezmoi
-
-# Documentation and meta files
+# Don't copy these files to home directory
 README.md
 LICENSE
-*.md
-
-# Directories with Docker configs etc
+.git/
+.github/
 docker/
 
-# Don't sync work-specific configs on personal machines
-{{- if hasKey . "isWork" }}
-{{- if not .isWork }}
-private_dot_ssh/work_*
-{{- end }}
-{{- end }}
-
-# Don't sync personal configs on work machines
-{{- if hasKey . "isWork" }}
-{{- if .isWork }}
-private_dot_ssh/personal_*
-{{- end }}
-{{- end }}
-
-# OS-specific ignores
-{{- if ne .chezmoi.os "darwin" }}
-# macOS-specific files
-Library/
-.macos
-{{- end }}
-
-{{- if ne .chezmoi.os "linux" }}
-# Linux-specific files
-.Xresources
-.xinitrc
-{{- end }}
+# Only use this template for generating the script
+run_setup.sh.tmpl

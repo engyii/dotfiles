@@ -1,39 +1,18 @@
-# ~/.chezmoi.toml.tmpl
-# Chezmoi configuration file
-
-{{- $hostname := .chezmoi.hostname }}
-{{- $isWSL := false }}
-{{- if (index .chezmoi.kernel "osrelease") | lower | contains "microsoft" }}
-{{-   $isWSL = true }}
-{{- end -}}
-
-{{- $name := "" }}
-{{- $email := "" }}
-{{- $isWork := false }}
-
-{{- if hasKey . "name" }}
-{{-   $name = .name }}
-{{- else }}
-{{-   $name = promptString "Your full name for Git" -}}
-{{- end }}
-
-{{- if hasKey . "email" }}
-{{-   $email = .email }}
-{{- else }}
-{{-   $email = promptString "Your email address for Git" -}}
-{{- end }}
-
-{{- if hasKey . "isWork" }}
-{{-   $isWork = .isWork }}
-{{- else }}
-{{-   $isWork = promptBool "Is this a work machine" -}}
-{{- end }}
-
 [data]
-    name = "{{ $name }}"
-    email = "{{ $email }}"
-    # Set to true if this is a work machine
-    isWork = {{ $isWork }}
-    # Automatically detected
-    isWSL = {{ $isWSL }}
-    hostname = "{{ $hostname }}"
+    name = "{{ .chezmoi.username }}"
+    email = "{{ promptString "email" }}"
+    # Detect OS for conditional configurations
+    {{- $osid := .chezmoi.os }}
+    {{- if eq .chezmoi.os "linux" }}
+    {{-   if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+    {{-     $osid = "wsl" }}
+    {{-   end }}
+    {{- end }}
+    osid = "{{ $osid }}"
+
+[diff]
+    pager = "delta"
+
+[merge]
+    command = "nvim"
+    args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]

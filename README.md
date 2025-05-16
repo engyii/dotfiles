@@ -1,30 +1,71 @@
 # Dotfiles
 
-Cross-platform dotfiles managed with [chezmoi](https://www.chezmoi.io/).
+Modern and consistent development environment configuration using [chezmoi](https://www.chezmoi.io/), [starship](https://starship.rs/), and [zsh](https://www.zsh.org/) with [zap](https://www.zapzsh.org/).
+
+![Catppuccin](https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png)
 
 ## Features
 
-- 🚀 Modern terminal setup with [Starship](https://starship.rs/)
-- 🔌 Zsh with [Zap](https://www.zapzsh.org/) for plugin management
-- 🎨 [Catppuccin](https://github.com/catppuccin/catppuccin) color scheme
-- 🛠️ Optimized for JavaScript/Node.js development
-- 🔄 Cross-platform compatibility (Linux, WSL)
-- 🔒 Secure credential management
+- 🚀 Cross-platform: Works on Linux, WSL, and other Unix-like systems
+- 🔧 Modern terminal tools (exa, bat, ripgrep, fzf)
+- ✨ Beautiful Catppuccin theme
+- 💻 Full developer environment with sane defaults
+- 🔍 Optimized for JavaScript/Node.js development
+- 🔐 SSH key management
+- 🧩 Modular zsh configuration with zap plugin manager
 
-## Included Tools
+## Quick Install
 
-- `zsh` - Modern shell
-- `starship` - Cross-shell prompt
-- `fzf` - Fuzzy finder
-- `exa`/`lsd` - Modern replacement for `ls`
-- `bat` - Modern replacement for `cat`
-- `ripgrep` - Modern replacement for `grep`
-- `fd` - Modern replacement for `find`
-- `tmux` - Terminal multiplexer
-- Plus many helpful zsh plugins and aliases
-
-## Installation
-
-### One-Line Bootstrap (Recommended)
 ```bash
-sh -c "$(curl -fsLS https://raw.githubusercontent.com/engyii/dotfiles/main/bootstrap.sh)"
+# Install chezmoi and apply dotfiles in one command
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply engyii
+```
+
+For a more customized approach:
+
+```bash
+# Install chezmoi
+sh -c "$(curl -fsLS get.chezmoi.io)"
+
+# Initialize dotfiles repository (readonly)
+chezmoi init engyii
+
+# See what changes would be made
+chezmoi diff
+
+# Apply changes
+chezmoi apply -v
+
+# Run the setup script to install dependencies
+chezmoi execute-template < $(chezmoi source-path)/run_setup.sh.tmpl | bash
+```
+
+## What's Included
+
+- **Shell**: zsh with zap plugin manager
+- **Prompt**: Starship with Catppuccin theme
+- **Git**: Sensible defaults and useful aliases
+- **Modern CLI**: exa, bat, ripgrep, fzf, delta
+- **Editor**: Neovim configuration
+- **Node.js**: Development setup with useful aliases
+
+## Customization
+
+You can customize this setup by:
+
+1. Forking this repository
+2. Cloning your fork and making changes
+3. Committing and pushing your changes
+4. Using `chezmoi init --apply username/dotfiles` with your username
+
+## Terminal Tools
+
+- **[exa](https://the.exa.website/)**: Modern replacement for `ls`
+- **[bat](https://github.com/sharkdp/bat)**: Enhanced `cat` with syntax highlighting
+- **[ripgrep](https://github.com/BurntSushi/ripgrep)**: Super-fast search tool
+- **[fzf](https://github.com/junegunn/fzf)**: Fuzzy finder for everything
+- **[delta](https://github.com/dandavison/delta)**: Better git diffs
+
+## License
+
+MIT

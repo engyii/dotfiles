@@ -1,5 +1,3 @@
-# Global .gitignore
-
 # OS generated files
 .DS_Store
 .DS_Store?
@@ -15,16 +13,22 @@ Thumbs.db
 *.swp
 *.swo
 *~
-.vim/
 
 # Node.js
 node_modules/
 npm-debug.log
 yarn-error.log
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.pnp.*
+.pnpm-debug.log
+
+# Build/compiled outputs
+dist/
+build/
+out/
+.next/
+
+# Logs
+logs/
+*.log
 
 # Environment variables
 .env
@@ -32,13 +36,3 @@ yarn-error.log
 .env.development.local
 .env.test.local
 .env.production.local
-
-# Logs
-logs/
-*.log
-
-# Build directories
-dist/
-build/
-out/
-.next/
