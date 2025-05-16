@@ -31,7 +31,7 @@ install_mac() {
     starship \
     zsh \
     git \
-    {{- if .terminal_utils }}
+    {{- if .termutils }}
     exa \
     bat \
     ripgrep \
@@ -65,7 +65,7 @@ install_debian() {
     curl \
     unzip \
     fontconfig \
-    {{- if .terminal_utils }}
+    {{- if .termutils }}
     ripgrep \
     fd-find \
     {{- end }}
@@ -95,7 +95,7 @@ install_debian() {
     rm Hack.zip
   fi
 
-    {{- if .terminal_utils }}
+    {{- if .termutils }}
   # Install exa (if not available, try eza as its successor)
   if ! command -v exa >/dev/null 2>&1 && ! command -v eza >/dev/null 2>&1; then
     if command -v cargo >/dev/null 2>&1; then
@@ -158,7 +158,7 @@ install_arch() {
     starship \
     git \
     ttf-hack-nerd \
-    {{- if .terminal_utils }}
+    {{- if .termutils }}
     exa \
     bat \
     ripgrep \
@@ -190,7 +190,7 @@ install_alpine() {
     unzip \
     fontconfig \
     zsh-vcs \
-    {{- if .terminal_utils }}
+    {{- if .termutils }}
     ripgrep \
     fd \
     fzf \
@@ -225,7 +225,7 @@ fi
     log "Running in container environment - skipping font installation"
   fi
 
-  {{- if .terminal_utils }}
+  {{- if .termutils }}
   # Install exa/eza
   if ! command -v exa >/dev/null 2>&1 && ! command -v eza >/dev/null 2>&1; then
     apk add eza || {

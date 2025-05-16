@@ -9,7 +9,7 @@
     ssh = true
     fzf = true
     tmux = true
-    terminal_utils = true
+    termutils = true
 
 [diff]
     pager = "delta"

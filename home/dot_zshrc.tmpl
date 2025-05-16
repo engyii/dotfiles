@@ -70,7 +70,7 @@ fi
 {{- end }}
 
 # Modern tools aliases - only set if the commands exist
-{{- if .terminal_utils }}
+{{- if .termutils }}
 if command -v exa &> /dev/null; then
   alias ls='exa --icons --group-directories-first'
   alias ll='exa -lh --icons --group-directories-first'
