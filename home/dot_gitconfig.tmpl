@@ -38,7 +38,7 @@
 	last = log -1 HEAD
 	visual = !gitk
 
-{{- if .features.terminal_utils }}
+{{- if and .features.terminal_utils (lookPath "delta") }}
 [delta]
 	navigate = true
 	light = false
