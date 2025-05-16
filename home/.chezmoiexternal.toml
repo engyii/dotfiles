@@ -1,0 +1,7 @@
+# This file defines external resources to be fetched when chezmoi is applied
+
+# Zap - Plugin manager for zsh
+[".local/share/zap/zap.zsh"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/zap-zsh/zap/master/zap.zsh"
+    refreshPeriod = "168h"

@@ -1,0 +1,252 @@
+#!/bin/bash
+
+set -eu
+
+# Detect OS
+OS="$(uname -s)"
+ARCH="$(uname -m)"
+
+# Helper functions
+log() {
+  echo "[$(date)] $1"
+}
+
+error() {
+  echo "[$(date)] ERROR: $1" >&2
+  exit 1
+}
+
+install_mac() {
+  log "Installing macOS packages"
+
+  # Check if Homebrew is installed
+  if ! command -v brew >/dev/null 2>&1; then
+    log "Installing Homebrew"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+
+  # Install packages
+  brew update
+  brew install \
+    starship \
+    zsh \
+    git \
+    {{- if .features.terminal_utils }}
+    exa \
+    bat \
+    ripgrep \
+    fd \
+    fzf \
+    git-delta \
+    {{- end }}
+    {{- if .features.tmux }}
+    tmux \
+    {{- end }}
+    {{- if .features.node }}
+    node \
+    {{- end }}
+    neovim
+
+  # Install Nerd Fonts
+  brew tap homebrew/cask-fonts
+  brew install --cask font-hack-nerd-font
+}
+
+install_debian() {
+  log "Installing Debian/Ubuntu packages"
+
+  # Update package lists
+  sudo apt-get update
+
+  # Install packages from apt
+  sudo apt-get install -y \
+    zsh \
+    git \
+    curl \
+    unzip \
+    fontconfig \
+    {{- if .features.terminal_utils }}
+    ripgrep \
+    fd-find \
+    {{- end }}
+    {{- if .features.tmux }}
+    tmux \
+    {{- end }}
+    {{- if .features.node }}
+    nodejs \
+    npm \
+    {{- end }}
+    neovim
+
+  # Install starship
+  if ! command -v starship >/dev/null 2>&1; then
+    log "Installing Starship"
+    curl -sS https://starship.rs/install.sh | sh -s -- -y
+  fi
+
+  # Install Nerd Font
+  if [ ! -f ~/.local/share/fonts/Hack\ Regular\ Nerd\ Font\ Complete.ttf ]; then
+    log "Installing Hack Nerd Font"
+    mkdir -p ~/.local/share/fonts
+    cd /tmp
+    curl -fLO https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Hack.zip
+    unzip -o Hack.zip -d ~/.local/share/fonts
+    fc-cache -fv
+    rm Hack.zip
+  fi
+    {{- if .features.terminal_utils }}
+  # Install exa (if not available, try eza as its successor)
+  if ! command -v exa >/dev/null 2>&1 && ! command -v eza >/dev/null 2>&1; then
+    if command -v cargo >/dev/null 2>&1; then
+      cargo install eza
+    else
+      sudo apt-get install -y eza || true
+  fi
+  fi
+
+  # Install bat
+  if ! command -v bat >/dev/null 2>&1; then
+    sudo apt-get install -y bat || sudo apt-get install -y batcat
+    if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
+      mkdir -p ~/.local/bin
+      ln -sf /usr/bin/batcat ~/.local/bin/bat
+  fi
+    fi
+
+  # Install delta
+  if ! command -v delta >/dev/null 2>&1; then
+    # Try to install from apt if possible
+    sudo apt-get install -y git-delta || {
+      log "Installing delta from GitHub release"
+      DELTA_VERSION="0.16.5"
+      DELTA_DEB="git-delta_${DELTA_VERSION}_amd64.deb"
+      curl -L -o "/tmp/${DELTA_DEB}" "https://github.com/dandavison/delta/releases/download/${DELTA_VERSION}/${DELTA_DEB}"
+      sudo dpkg -i "/tmp/${DELTA_DEB}"
+      rm "/tmp/${DELTA_DEB}"
+    }
+fi
+
+  # Install fzf
+  if [ ! -d ~/.fzf ]; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install --key-bindings --completion --no-update-rc
+  fi
+  {{- end }}
+}
+
+install_arch() {
+  log "Installing Arch Linux packages"
+
+  # Update package lists
+  sudo pacman -Syu --noconfirm
+
+  # Install yay if not installed
+  if ! command -v yay >/dev/null 2>&1; then
+    log "Installing yay"
+    sudo pacman -S --needed --noconfirm git base-devel
+    git clone https://aur.archlinux.org/yay.git /tmp/yay
+    cd /tmp/yay
+    makepkg -si --noconfirm
+    cd -
+    rm -rf /tmp/yay
+  fi
+
+  # Install packages
+  yay -S --needed --noconfirm \
+    zsh \
+    starship \
+    git \
+    ttf-hack-nerd \
+    {{- if .features.terminal_utils }}
+    exa \
+    bat \
+    ripgrep \
+    fd \
+    fzf \
+    git-delta \
+    {{- end }}
+    {{- if .features.tmux }}
+    tmux \
+    {{- end }}
+    {{- if .features.node }}
+    nodejs \
+    npm \
+    {{- end }}
+    neovim
+}
+
+# Install Oh My Tmux
+install_ohmytmux() {
+  if [ ! -d ~/.tmux ]; then
+    log "Installing Oh My Tmux"
+    git clone https://github.com/gpakosz/.tmux.git ~/.tmux
+    ln -sf ~/.tmux/.tmux.conf ~/.tmux.conf
+  fi
+}
+
+# Install nvm
+install_nvm() {
+  if [ ! -d ~/.nvm ]; then
+    log "Installing nvm"
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    nvm install --lts
+  fi
+}
+
+# Install TPM (Tmux Plugin Manager)
+install_tpm() {
+  if [ ! -d ~/.tmux/plugins/tpm ]; then
+    log "Installing Tmux Plugin Manager"
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  fi
+}
+
+# Install zap
+install_zap() {
+  if [ ! -f ~/.local/share/zap/zap.zsh ]; then
+    log "Installing zap"
+    zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
+  fi
+}
+
+# Main installation logic
+log "Starting package installation"
+
+case "$OS" in
+  Darwin)
+    install_mac
+    ;;
+  Linux)
+    if [ -f /etc/debian_version ]; then
+      install_debian
+    elif [ -f /etc/arch-release ]; then
+      install_arch
+    else
+      error "Unsupported Linux distribution"
+    fi
+    ;;
+  *)
+    error "Unsupported operating system: $OS"
+    ;;
+esac
+
+{{- if .features.tmux }}
+install_tpm
+{{- end }}
+
+{{- if .features.node }}
+install_nvm
+{{- end }}
+
+# Install zap plugin manager
+install_zap
+
+# Set zsh as default shell if it's not already
+if [ "$SHELL" != "$(which zsh)" ]; then
+  log "Setting zsh as default shell"
+  chsh -s "$(which zsh)" || true
+fi
+
+log "Package installation completed!"

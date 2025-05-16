@@ -1,0 +1,31 @@
+{{- if .features.ssh }}
+# SSH configuration file
+# This file is managed by chezmoi
+
+# Default configuration for all hosts
+Host *
+    AddKeysToAgent yes
+    IdentitiesOnly yes
+    ServerAliveInterval 60
+    ServerAliveCountMax 30
+    ForwardAgent no
+    
+# Example GitHub configuration
+Host github.com
+    User git
+    IdentityFile ~/.ssh/github
+    
+# Example work configuration
+# Host work
+#    Hostname work.example.com
+#    User username
+#    IdentityFile ~/.ssh/work
+#    ForwardAgent yes
+
+# Example personal server
+# Host personal
+#    Hostname personal.example.com
+#    User username
+#    IdentityFile ~/.ssh/personal
+#    Port 22
+{{- end }}

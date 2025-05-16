@@ -1,0 +1,20 @@
+[data]
+    name = {{ prompt "Your name" "John Doe" }}
+    email = {{ prompt "Your email" "john.doe@example.com" }}
+    # You can customize these based on your preferences
+    editor = "nvim"
+    # Theme configuration
+[data.features]
+    git = true
+    node = true
+    ssh = true
+    fzf = true
+    tmux = true
+    terminal_utils = true
+
+[diff]
+    pager = "delta"
+
+[merge]
+    command = "nvim"
+    args = ["-d", "{{ .Destination }}", "{{ .Source }}", "{{ .Target }}"]

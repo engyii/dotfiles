@@ -1,0 +1,56 @@
+[user]
+	name = {{ .name }}
+	email = {{ .email }}
+
+[core]
+	editor = {{ .editor }}
+	excludesfile = ~/.gitignore
+	autocrlf = input
+{{- if .features.terminal_utils }}
+	pager = delta
+{{- end }}
+
+[init]
+	defaultBranch = main
+
+[color]
+	ui = auto
+
+[fetch]
+	prune = true
+
+[pull]
+	rebase = true
+
+[push]
+	default = current
+	autoSetupRemote = true
+
+[rebase]
+	autosquash = true
+
+[alias]
+	st = status
+	ci = commit
+	co = checkout
+	br = branch
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	visual = !gitk
+
+{{- if .features.terminal_utils }}
+[delta]
+	navigate = true
+	light = {{ if eq .theme "catppuccin-latte" }}true{{ else }}false{{ end }}
+	theme = Catppuccin-{{ if eq .theme "catppuccin-latte" }}latte{{ else if eq .theme "catppuccin-frappe" }}frappe{{ else if eq .theme "catppuccin-macchiato" }}macchiato{{ else }}mocha{{ end }}
+	line-numbers = true
+	side-by-side = true
+
+[interactive]
+	diffFilter = delta --color-only
+{{- end }}
+
+[includeIf "gitdir:~/work/"]
+	path = ~/.gitconfig-work

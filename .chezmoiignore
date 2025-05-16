@@ -1,9 +1,0 @@
-# Don't copy these files to home directory
-README.md
-LICENSE
-.git/
-.github/
-docker/
-
-# Only use this template for generating the script
-run_setup.sh.tmpl

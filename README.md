@@ -1,71 +1,78 @@
 # Dotfiles
 
-Modern and consistent development environment configuration using [chezmoi](https://www.chezmoi.io/), [starship](https://starship.rs/), and [zsh](https://www.zsh.org/) with [zap](https://www.zapzsh.org/).
-
-![Catppuccin](https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png)
+My personal dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 
 ## Features
 
-- 🚀 Cross-platform: Works on Linux, WSL, and other Unix-like systems
-- 🔧 Modern terminal tools (exa, bat, ripgrep, fzf)
-- ✨ Beautiful Catppuccin theme
-- 💻 Full developer environment with sane defaults
-- 🔍 Optimized for JavaScript/Node.js development
-- 🔐 SSH key management
-- 🧩 Modular zsh configuration with zap plugin manager
+- Cross-platform Unix compatibility
+- Zsh configuration with [zap](https://github.com/zap-zsh/zap) plugin manager
+- [Starship](https://starship.rs/) prompt
+- Git configuration
+- Terminal utilities (fzf, exa/lsd, bat, ripgrep, etc.)
+- SSH key management
+- [Catppuccin](https://github.com/catppuccin/catppuccin) theme with easy switching
 
-## Quick Install
+## Installation
+
+### Quick Install
 
 ```bash
-# Install chezmoi and apply dotfiles in one command
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply engyii
 ```
 
-For a more customized approach:
+### Manual Installation
+
+1. Install chezmoi:
+   ```bash
+   sh -c "$(curl -fsLS get.chezmoi.io)"
+   ```
+
+2. Initialize with this repo:
+   ```bash
+   chezmoi init engyii
+   ```
+
+3. Check what changes would be made:
+   ```bash
+   chezmoi diff
+   ```
+
+4. Apply the changes:
+   ```bash
+   chezmoi apply -v
+   ```
+
+## Updating
+
+To update your dotfiles from this repo:
 
 ```bash
-# Install chezmoi
-sh -c "$(curl -fsLS get.chezmoi.io)"
-
-# Initialize dotfiles repository (readonly)
-chezmoi init engyii
-
-# See what changes would be made
-chezmoi diff
-
-# Apply changes
-chezmoi apply -v
-
-# Run the setup script to install dependencies
-chezmoi execute-template < $(chezmoi source-path)/run_setup.sh.tmpl | bash
+chezmoi update -v
 ```
 
-## What's Included
+## Prerequisites
 
-- **Shell**: zsh with zap plugin manager
-- **Prompt**: Starship with Catppuccin theme
-- **Git**: Sensible defaults and useful aliases
-- **Modern CLI**: exa, bat, ripgrep, fzf, delta
-- **Editor**: Neovim configuration
-- **Node.js**: Development setup with useful aliases
+- zsh
+- git
 
-## Customization
+## Optional Dependencies
 
-You can customize this setup by:
+- exa/lsd (modern ls replacement)
+- bat (cat replacement)
+- fzf (fuzzy finder)
+- ripgrep (better grep)
+- fd (better find)
+- delta (better git diff)
+- tmux (terminal multiplexer)
+- neovim (text editor)
+- Node.js
 
-1. Forking this repository
-2. Cloning your fork and making changes
-3. Committing and pushing your changes
-4. Using `chezmoi init --apply username/dotfiles` with your username
+## Theme Switching
 
-## Terminal Tools
+Edit the `.chezmoi.toml` file and change the `theme` value to one of:
+- catppuccin-latte (light)
+- catppuccin-frappe (medium-dark)
+- catppuccin-macchiato (dark)
+- catppuccin-mocha (darker)
 
-- **[exa](https://the.exa.website/)**: Modern replacement for `ls`
-- **[bat](https://github.com/sharkdp/bat)**: Enhanced `cat` with syntax highlighting
-- **[ripgrep](https://github.com/BurntSushi/ripgrep)**: Super-fast search tool
-- **[fzf](https://github.com/junegunn/fzf)**: Fuzzy finder for everything
-- **[delta](https://github.com/dandavison/delta)**: Better git diffs
-
-## License
-
-MIT
+Then run `chezmoi apply` to update your configuration.
