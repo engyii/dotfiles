@@ -31,7 +31,7 @@ install_mac() {
     starship \
     zsh \
     git \
-    {{- if .features.terminal_utils }}
+    {{- if .terminal_utils }}
     exa \
     bat \
     ripgrep \
@@ -39,10 +39,10 @@ install_mac() {
     fzf \
     git-delta \
     {{- end }}
-    {{- if .features.tmux }}
+    {{- if .tmux }}
     tmux \
     {{- end }}
-    {{- if .features.node }}
+    {{- if .node }}
     node \
     {{- end }}
     neovim
@@ -65,14 +65,14 @@ install_debian() {
     curl \
     unzip \
     fontconfig \
-    {{- if .features.terminal_utils }}
+    {{- if .terminal_utils }}
     ripgrep \
     fd-find \
     {{- end }}
-    {{- if .features.tmux }}
+    {{- if .tmux }}
     tmux \
     {{- end }}
-    {{- if .features.node }}
+    {{- if .node }}
     nodejs \
     npm \
     {{- end }}
@@ -95,7 +95,7 @@ install_debian() {
     rm Hack.zip
   fi
 
-    {{- if .features.terminal_utils }}
+    {{- if .terminal_utils }}
   # Install exa (if not available, try eza as its successor)
   if ! command -v exa >/dev/null 2>&1 && ! command -v eza >/dev/null 2>&1; then
     if command -v cargo >/dev/null 2>&1; then
@@ -158,7 +158,7 @@ install_arch() {
     starship \
     git \
     ttf-hack-nerd \
-    {{- if .features.terminal_utils }}
+    {{- if .terminal_utils }}
     exa \
     bat \
     ripgrep \
@@ -166,10 +166,10 @@ install_arch() {
     fzf \
     git-delta \
     {{- end }}
-    {{- if .features.tmux }}
+    {{- if .tmux }}
     tmux \
     {{- end }}
-    {{- if .features.node }}
+    {{- if .node }}
     nodejs \
     npm \
     {{- end }}
@@ -190,15 +190,15 @@ install_alpine() {
     unzip \
     fontconfig \
     zsh-vcs \
-    {{- if .features.terminal_utils }}
+    {{- if .terminal_utils }}
     ripgrep \
     fd \
     fzf \
 {{- end }}
-    {{- if .features.tmux }}
+    {{- if .tmux }}
     tmux \
 {{- end }}
-    {{- if .features.node }}
+    {{- if .node }}
     nodejs \
     npm \
     {{- end }}
@@ -225,7 +225,7 @@ fi
     log "Running in container environment - skipping font installation"
   fi
 
-  {{- if .features.terminal_utils }}
+  {{- if .terminal_utils }}
   # Install exa/eza
   if ! command -v exa >/dev/null 2>&1 && ! command -v eza >/dev/null 2>&1; then
     apk add eza || {
@@ -350,11 +350,11 @@ case "$OS" in
     ;;
 esac
 
-{{- if .features.tmux }}
+{{- if .tmux }}
 install_tpm
 {{- end }}
 
-{{- if .features.node }}
+{{- if .node }}
 install_nvm
 {{- end }}
 

@@ -4,7 +4,6 @@
     # You can customize these based on your preferences
     editor = "vi"  # Default editor, change to vim, nvim, etc. as needed
 
-[data.features]
     git = true
     node = true
     ssh = true

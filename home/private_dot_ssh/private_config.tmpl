@@ -1,4 +1,4 @@
-{{- if .features.ssh }}
+{{- if .ssh }}
 # SSH configuration file
 # This file is managed by chezmoi
 
@@ -9,12 +9,12 @@ Host *
     ServerAliveInterval 60
     ServerAliveCountMax 30
     ForwardAgent no
-    
+
 # Example GitHub configuration
 Host github.com
     User git
     IdentityFile ~/.ssh/github
-    
+
 # Example work configuration
 # Host work
 #    Hostname work.example.com

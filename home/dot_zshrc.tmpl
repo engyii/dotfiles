@@ -50,7 +50,7 @@ if [[ -f "$HOME/.local/share/zap/zap.zsh" ]]; then
     plug "zap-zsh/exa"
 fi
 
-  {{- if .features.git }}
+  {{- if .git }}
   # Load fzf-tab if fzf is available
   if command -v fzf &> /dev/null; then
     plug "Aloxaf/fzf-tab"
@@ -59,7 +59,7 @@ fi
 fi
 
 # FZF configuration
-{{- if .features.fzf }}
+{{- if .fzf }}
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 if command -v fzf &> /dev/null; then
   export FZF_DEFAULT_OPTS=" \
@@ -70,7 +70,7 @@ fi
 {{- end }}
 
 # Modern tools aliases - only set if the commands exist
-{{- if .features.terminal_utils }}
+{{- if .terminal_utils }}
 if command -v exa &> /dev/null; then
   alias ls='exa --icons --group-directories-first'
   alias ll='exa -lh --icons --group-directories-first'
@@ -96,7 +96,7 @@ fi
 {{- end }}
 
 # Git aliases
-{{- if .features.git }}
+{{- if .git }}
 if command -v git &> /dev/null; then
   alias g='git'
   alias gs='git status'
@@ -110,14 +110,14 @@ fi
 {{- end }}
 
 # Node.js environment
-{{- if .features.node }}
+{{- if .node }}
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 {{- end }}
 
 # Tmux configuration
-{{- if .features.tmux }}
+{{- if .tmux }}
 if command -v tmux &> /dev/null; then
   if [ -z "$TMUX" ] && [ -n "$SSH_TTY" ] && [[ $- =~ i ]]; then
     tmux attach-session -t ssh_tmux || tmux new-session -s ssh_tmux
